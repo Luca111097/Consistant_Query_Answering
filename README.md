@@ -1,1 +1,1 @@
-# Consistant_Query_Answering
+# Consistent_Query_Answering
