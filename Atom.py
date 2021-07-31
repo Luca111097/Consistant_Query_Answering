@@ -4,7 +4,6 @@ class Atom:
     key = []
     non_key = []
     closure = []
-    AllConst = ["a", "b"]
 
     def __init__(self, relation_name, key, non_key):
         self.relation_name = relation_name
@@ -13,7 +12,7 @@ class Atom:
         self.closure = []
 
     # Calculate closure for an atom
-    def calculateclosure(self, functionalDependencyToCheck):
+    def calculate_closure(self, functionalDependencyToCheck, all_constant_in_query):
 
         i = 0
 
@@ -21,13 +20,13 @@ class Atom:
             self.closure = []
         else:
             for attribute in self.key:
-                if attribute not in self.AllConst:
+                if attribute not in all_constant_in_query:
                     self.closure.append(attribute)
 
             print("Dépendances fonctionelles de " + self.relation_name)
 
             for df in functionalDependencyToCheck:
-                df.printDF()
+                df.print_functional_dependency()
 
             while i <= len(functionalDependencyToCheck):
                 for index, df in enumerate(functionalDependencyToCheck):
@@ -35,11 +34,11 @@ class Atom:
                     if df in functionalDependencyToCheck and check or len(df.left_member) == 0:
                         del functionalDependencyToCheck[index]
                         for attribute in df.right_member:
-                            if attribute not in self.AllConst:
+                            if attribute not in all_constant_in_query:
                                 self.closure.append(attribute)
                         i = 0
                 i += 1
 
     # Display an atom in the form R(x,y)
-    def printatom(self):
+    def print_atom(self):
         print(str(self.relation_name) + "(" + str(self.key) + "," + str(self.non_key) + ")")

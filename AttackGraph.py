@@ -1,65 +1,65 @@
 class AttackGraph:
 
-    notUsedFunctionalDependency = []
-    attackedVars = []
-    isFirstOrderExpressible = False
-    areThereAnyAttack = False
+    not_used_functional_dependency = []
+    attacked_vars = []
+    is_first_order_expressible = False
+    are_there_any_attack = False
     attack = []
-    occurInAtom = {}
-    AllConst = ["a", "b"]
+    occur_in_atom = {}
+    all_constant_in_query = []
 
-    def __init__(self):
-        pass
+    def __init__(self, all_constant_in_query):
+        self.all_constant_in_query = all_constant_in_query
 
     # Perfom the union of two lists
     def union(self, list1, list2):
         final_list = list1 + list2
         return final_list
 
-    def initialize(self, atomList, allVariableInQuery):
+    def initialize(self, atom_list, all_variable_in_query):
 
-        for indexAtomF in range(len(atomList)):
+        for index_atom_f in range(len(atom_list)):
 
-            atomF = atomList[indexAtomF]
-            allVariableInQuery = self.union(atomF.key, atomF.non_key)
+            atomF = atom_list[index_atom_f]
+            all_variable_in_query = self.union(atomF.key, atomF.non_key)
 
-            for var in allVariableInQuery:  # prendra successivement "x", "y", "z" avec l'exemple
-                if var in self.occurInAtom:
-                    self.occurInAtom[var].append(atomList[indexAtomF])  # ajout l'élement si
-                    # la liste était déjà partiellement remplie
+            for var in all_variable_in_query:
+                if var in self.occur_in_atom:
+                    self.occur_in_atom[var].append(atom_list[index_atom_f])
                 else:
-                    self.occurInAtom[var] = [atomList[indexAtomF]]  # créé la liste si elle était vide
+                    self.occur_in_atom[var] = [atom_list[index_atom_f]]
 
-            colOfAttackGraph = []
-            for i in range(0, len(atomList)):
-                colOfAttackGraph.append(0)
-            self.attack.append(colOfAttackGraph)
+            col_of_attack_graph = []
+            for i in range(0, len(atom_list)):
+                col_of_attack_graph.append(0)
+            self.attack.append(col_of_attack_graph)
 
-    def realizeattackgraph(self, atomList, functionalDependencyList):
+    def realize_attack_graph(self, atomList, functionalDependencyList):
 
-        self.isFirstOrderExpressible = True
+        self.is_first_order_expressible = True
 
-        for indexAtomF, atomF in enumerate(atomList):
+        for index_atom_f, atom_f in enumerate(atomList):
 
-            notUsedFunctionalDependency = functionalDependencyList.copy()
-            del notUsedFunctionalDependency[indexAtomF]
-            atomList[indexAtomF].calculateclosure(notUsedFunctionalDependency)
+            not_used_functional_dependency = functionalDependencyList.copy()
+            del not_used_functional_dependency[index_atom_f]
+            atomList[index_atom_f].calculate_closure(not_used_functional_dependency, self.all_constant_in_query)
 
-            print("Fermeture pour l'atome " + atomF.relation_name + " " + str(atomF.closure))
-            attackedVars = [x for x in atomF.non_key if x not in atomF.closure and x not in self.AllConst]
+            print("Fermeture pour l'atome " + atom_f.relation_name + " " + str(atom_f.closure))
+            attacked_vars = [x for x in atom_f.non_key if x not in atom_f.closure
+                             and x not in self.all_constant_in_query]
 
-            while len(attackedVars) != 0:
+            while len(attacked_vars) != 0:
 
-                x = attackedVars[0]
-                del attackedVars[0]
+                x = attacked_vars[0]
+                del attacked_vars[0]
 
-                for atomG in self.occurInAtom[x]:
-                    if atomG != atomF and self.attack[indexAtomF][atomList.index(atomG)] == 0:
-                        self.attack[indexAtomF][atomList.index(atomG)] = 1
-                        self.areThereAnyAttack = True
-                        if self.attack[atomList.index(atomG)][indexAtomF] == 1:
-                            self.isFirstOrderExpressible = False
+                for atom_g in self.occur_in_atom[x]:
+                    if atom_g != atom_f and self.attack[index_atom_f][atomList.index(atom_g)] == 0:
+                        self.attack[index_atom_f][atomList.index(atom_g)] = 1
+                        self.are_there_any_attack = True
+                        if self.attack[atomList.index(atom_g)][index_atom_f] == 1:
+                            self.is_first_order_expressible = False
 
-                        for y in self.union(atomG.key, atomG.non_key):
-                            if y != x and y not in atomF.closure and y not in self.AllConst:
-                                attackedVars += y
+                        for y in self.union(atom_g.key, atom_g.non_key):
+                            if y != x and y not in atom_f.closure and y not in self.all_constant_in_query:
+                                attacked_vars += y
