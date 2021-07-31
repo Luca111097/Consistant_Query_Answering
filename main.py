@@ -22,8 +22,18 @@ atom = None
 # Build functional dependency and put them in a list
 def build_functional_dependency_list():
     for atom in atom_list:
-        functional_dependency_list.append(FunctionalDependency(atom.key, atom.non_key))
+        atom_key_processing = atom.key.copy()
+        atom_non_key_processing = atom.non_key.copy()
 
+        for idx_key_processing in range(len(atom_key_processing)):
+            if atom_key_processing[idx_key_processing] in all_constant_in_query:
+                atom_key_processing[idx_key_processing] = ''
+
+        for idx_non_key_processing in range(len(atom_non_key_processing)):
+            if atom_non_key_processing[idx_non_key_processing] in all_constant_in_query:
+                atom_non_key_processing[idx_non_key_processing] = ''
+
+        functional_dependency_list.append(FunctionalDependency(atom_key_processing, atom_non_key_processing))
 
 def find_information_and_name(chain):
     idx_open_paranthesis = 0
