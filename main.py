@@ -101,19 +101,21 @@ for atom_chain in all_atom_in_query:
 #######################################################
 build_functional_dependency_list()
 attackGraph = AttackGraph(all_constant_in_query)
-forewritter = FirstOrderRewrite(all_constant_in_query, all_variable_in_query)
+attackGraph.initialize(atom_list)
+fo_rewritter = FirstOrderRewrite(all_constant_in_query, all_variable_in_query)
 
 #######################################################
 #                  Attack Graph                       #
 #######################################################
-attackGraph.initialize(atom_list, all_variable_in_query)
 attackGraph.realize_attack_graph(atom_list, functional_dependency_list)
 
 #######################################################
 #                 First Order Rewrite                 #
 #######################################################
-if attackGraph.are_there_any_attack and attackGraph.is_first_order_expressible:
+if attackGraph.is_first_order_expressible:
     print("Tableau des attaques : " + str(attackGraph.attack))
-    rewrite = forewritter.perform_first_order_rewrite(atom_list, free)
+    rewrite = fo_rewritter.perform_first_order_rewrite(atom_list, free)
     print("Réécriture : " + rewrite)
+
+
 

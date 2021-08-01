@@ -16,14 +16,14 @@ class AttackGraph:
         final_list = list1 + list2
         return final_list
 
-    def initialize(self, atom_list, all_variable_in_query):
+    def initialize(self, atom_list):
 
         for index_atom_f in range(len(atom_list)):
 
             atomF = atom_list[index_atom_f]
-            all_variable_in_query = self.union(atomF.key, atomF.non_key)
+            all_variable_in_atom = self.union(atomF.key, atomF.non_key)
 
-            for var in all_variable_in_query:
+            for var in all_variable_in_atom:
                 if var in self.occur_in_atom:
                     self.occur_in_atom[var].append(atom_list[index_atom_f])
                 else:

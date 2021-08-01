@@ -16,7 +16,7 @@ class Atom:
 
         i = 0
 
-        if len(self.key) == 0:
+        if '' in self.key:
             self.closure = []
         else:
             for attribute in self.key:
@@ -31,7 +31,7 @@ class Atom:
             while i <= len(functionalDependencyToCheck):
                 for index, df in enumerate(functionalDependencyToCheck):
                     check = any(item in df.left_member for item in self.closure)
-                    if df in functionalDependencyToCheck and check or len(df.left_member) == 0:
+                    if (df in functionalDependencyToCheck and check) or ('' in df.left_member):
                         del functionalDependencyToCheck[index]
                         for attribute in df.right_member:
                             if attribute not in all_constant_in_query:
