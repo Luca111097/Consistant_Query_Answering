@@ -2,6 +2,7 @@ class FirstOrderRewrite:
 
     all_constant_in_query = None
     all_variable_in_query = None
+    j = 1
 
     def __init__(self, all_constant_in_query, all_variable_in_query):
 
@@ -39,13 +40,13 @@ class FirstOrderRewrite:
     def perform_first_order_rewrite(self, Atoms, Free):
 
         if len(Atoms) == 0:
-            return ""
+            return "true"
         else:
             VAR = []
             CONST = []
             NEWVAR = []
             F = Atoms[0]
-            j = 1
+
 
             for key in F.key:
                 if key in self.all_variable_in_query and key not in Free:
@@ -59,10 +60,10 @@ class FirstOrderRewrite:
                     Free.append(nonKey)
 
                 elif nonKey in self.all_constant_in_query:
-                    NEWVAR.append("c" + str(j))
+                    NEWVAR.append("c" + str(self.j))
                     i = F.non_key.index(nonKey)
                     CONST.insert(i, nonKey)
-                    j += 1
+                    self.j += 1
 
         existVar, existNewVar, existConst = self.formatting_all_elements(VAR, NEWVAR, CONST)
 

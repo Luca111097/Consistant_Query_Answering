@@ -11,7 +11,7 @@ all_constant_in_query = []
 all_atom_in_query = []
 atom_list = []
 functional_dependency_list = []
-free = []
+free = ['z']
 atom = None
 
 
@@ -112,6 +112,7 @@ attackGraph.realize_attack_graph(atom_list, functional_dependency_list)
 #######################################################
 #                 First Order Rewrite                 #
 #######################################################
+print("Tableau des attaques : " + str(attackGraph.attack))
 if attackGraph.is_first_order_expressible:
     print("Tableau des attaques : " + str(attackGraph.attack))
     rewrite = fo_rewritter.perform_first_order_rewrite(atom_list, free)
