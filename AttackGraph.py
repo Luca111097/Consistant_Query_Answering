@@ -1,29 +1,30 @@
 class AttackGraph:
 
-    not_used_functional_dependency = []
-    attacked_vars = []
-    is_first_order_expressible = False
-    are_there_any_attack = False
-    attack = []
-    occur_in_atom = {}
-    all_constant_in_query = []
-
     def __init__(self, all_constant_in_query):
+
+        self.not_used_functional_dependency = []
+        self.attacked_vars = []
+        self.is_first_order_expressible = True
+        self.are_there_any_attack = False
+        self.attack = []
+        self.occur_in_atom = {}
+        self.all_variable_in_atom = []
+
         self.all_constant_in_query = all_constant_in_query
 
     # Perfom the union of two lists
-    def union(self, list1, list2):
+    @staticmethod
+    def union(list1, list2):
         final_list = list1 + list2
         return final_list
 
     def initialize(self, atom_list):
 
-        for index_atom_f in range(len(atom_list)):
+        for index_atom_f, atom_F in enumerate(atom_list):
 
-            atomF = atom_list[index_atom_f]
-            all_variable_in_atom = self.union(atomF.key, atomF.non_key)
+            self.all_variable_in_atom = AttackGraph.union(atom_F.key, atom_F.non_key)
 
-            for var in all_variable_in_atom:
+            for var in self.all_variable_in_atom:
                 if var in self.occur_in_atom:
                     self.occur_in_atom[var].append(atom_list[index_atom_f])
                 else:

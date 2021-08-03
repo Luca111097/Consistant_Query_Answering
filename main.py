@@ -4,23 +4,13 @@ from AttackGraph import *
 from FirstOrderRewrite import *
 
 #######################################################
-#                     Parameters                      #
-#######################################################
-all_variable_in_query = []
-all_constant_in_query = []
-all_atom_in_query = []
-atom_list = []
-functional_dependency_list = []
-free = ['z']
-atom = None
-
-
-#######################################################
 #                     Functions                       #
 #######################################################
 
+
 # Build functional dependency and put them in a list
-def build_functional_dependency_list():
+def build_functional_dependency_list(atom_list):
+
     for atom in atom_list:
         atom_key_processing = atom.key.copy()
         atom_non_key_processing = atom.non_key.copy()
@@ -34,6 +24,7 @@ def build_functional_dependency_list():
                 atom_non_key_processing[idx_non_key_processing] = ''
 
         functional_dependency_list.append(FunctionalDependency(atom_key_processing, atom_non_key_processing))
+
 
 def find_information_and_name(chain):
     idx_open_paranthesis = 0
@@ -82,41 +73,47 @@ def find_keys_and_constants(chain, key):
 #######################################################
 #                  Input treatment                    #
 #######################################################
-query = input("Enter your query : ")
-all_atom_in_query = query.split(";")
+if __name__ == "__main__":
 
-for atom_chain in all_atom_in_query:
-    keys = []
-    non_keys = []
+    all_variable_in_query = []
+    all_constant_in_query = []
+    atom_list = []
+    functional_dependency_list = []
+    free = []
+    atom = None
 
-    relation_name, info = find_information_and_name(atom_chain)
-    key_chain, non_key_chain = extract_brackets(info)
-    find_keys_and_constants(key_chain, keys)
-    find_keys_and_constants(non_key_chain, non_keys)
+    query = input("Enter your query : ")
+    all_atom_in_query = query.split(";")
 
-    atom_list.append(Atom(relation_name, keys, non_keys))
+    for atom_chain in all_atom_in_query:
+        keys = []
+        non_keys = []
 
-#######################################################
-#                  Initialization                     #
-#######################################################
-build_functional_dependency_list()
-attackGraph = AttackGraph(all_constant_in_query)
-attackGraph.initialize(atom_list)
-fo_rewritter = FirstOrderRewrite(all_constant_in_query, all_variable_in_query)
+        relation_name, info = find_information_and_name(atom_chain)
+        key_chain, non_key_chain = extract_brackets(info)
+        find_keys_and_constants(key_chain, keys)
+        find_keys_and_constants(non_key_chain, non_keys)
 
-#######################################################
-#                  Attack Graph                       #
-#######################################################
-attackGraph.realize_attack_graph(atom_list, functional_dependency_list)
+        atom_list.append(Atom(relation_name, keys, non_keys))
 
-#######################################################
-#                 First Order Rewrite                 #
-#######################################################
-print("Tableau des attaques : " + str(attackGraph.attack))
-if attackGraph.is_first_order_expressible:
+    # ################## Initialization ############################
+
+    build_functional_dependency_list(atom_list)
+    attackGraph = AttackGraph(all_constant_in_query)
+    fo_rewriter = FirstOrderRewrite(all_constant_in_query, all_variable_in_query)
+
+    # #################### Attack Graph ############################
+
+    attackGraph.initialize(atom_list)
+    attackGraph.realize_attack_graph(atom_list, functional_dependency_list)
+
+    # ################### First Order Rewrite ######################
+
     print("Tableau des attaques : " + str(attackGraph.attack))
-    rewrite = fo_rewritter.perform_first_order_rewrite(atom_list, free)
-    print("Réécriture : " + rewrite)
+
+    if attackGraph.is_first_order_expressible:
+        rewrite = fo_rewriter.perform_first_order_rewrite(atom_list, free)
+        print("Réécriture : " + rewrite)
 
 
 
