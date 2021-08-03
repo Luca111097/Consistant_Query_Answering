@@ -34,7 +34,7 @@ class FirstOrderRewrite:
             existNewVar = ""
 
         if len(CONST) != 0:
-            existConst = u"\u2192 "
+            existConst = STR_ARROW
             for index, everyConst in enumerate(CONST):
                 if index == 0:
                     existConst += NEWVAR[index] + " = " + str(everyConst)
@@ -84,9 +84,11 @@ class FirstOrderRewrite:
             toContinue = STR_ARROW + toContinue
         elif toContinue == "true":
             toContinue = STR_AND + toContinue
+        else:
+            toContinue = STR_ARROW + toContinue
 
         return existVar + " (" + F.relation_name + " (" + ",".join(F.key) + "," + ",".join(
-            F.non_key) + ") " + u"\u2227 (" + existNewVar + " (" + F.relation_name + "(" + ",".join(
+            F.non_key) + ") " + STR_AND + " (" + existNewVar + " (" + F.relation_name + "(" + ",".join(
             F.key) + "," + ",".join(
             NEWVAR) + ") " + existConst + toContinue + ")))"
 
