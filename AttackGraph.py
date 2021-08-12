@@ -9,7 +9,6 @@ class AttackGraph:
         self.attack = []
         self.occur_in_atom = {}
         self.all_variable_in_atom = []
-
         self.all_constant_in_query = all_constant_in_query
 
     # Perfom the union of two lists
@@ -24,12 +23,14 @@ class AttackGraph:
 
             self.all_variable_in_atom = AttackGraph.union(atom_F.key, atom_F.non_key)
 
+            # Identify in which atom occur each var
             for var in self.all_variable_in_atom:
                 if var in self.occur_in_atom:
                     self.occur_in_atom[var].append(atom_list[index_atom_f])
                 else:
                     self.occur_in_atom[var] = [atom_list[index_atom_f]]
 
+            # Build the attack matrix
             col_of_attack_graph = []
             for i in range(0, len(atom_list)):
                 col_of_attack_graph.append(0)
@@ -46,6 +47,8 @@ class AttackGraph:
             atomList[index_atom_f].calculate_closure(not_used_functional_dependency, self.all_constant_in_query)
 
             print("Fermeture pour l'atome " + atom_f.relation_name + " " + str(atom_f.closure))
+
+            # Put all variables which are not in the closure of the F atom in attacked_var
             attacked_vars = [x for x in atom_f.non_key if x not in atom_f.closure
                              and x not in self.all_constant_in_query]
 

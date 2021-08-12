@@ -8,29 +8,38 @@ class Atom:
 
     # Calculate closure for an atom
     def calculate_closure(self, functionalDependencyToCheck, all_constant_in_query):
-
+     
         i = 0
 
+        # If the only element of the array is empty string then pass
         if '' in self.key and len(self.key) == 1:
             pass
         else:
             for attribute in self.key:
-                if attribute not in all_constant_in_query:
-                    self.closure.append(attribute)
+                # Check if the element is a variable not empty
+                if attribute not in all_constant_in_query and attribute != '': 
+                    if attribute not in self.closure:
+                        self.closure.append(attribute)
 
             print("Dépendances fonctionelles de " + self.relation_name)
 
             for df in functionalDependencyToCheck:
                 print(f"{' '*4}-{df}")
 
+            # Runs through the whole array
             while i <= len(functionalDependencyToCheck):
                 for index, df in enumerate(functionalDependencyToCheck):
                     check = any(item in df.left_member for item in self.closure)
+                    # Check if item is in left member of functional dependency 
+                    # or the second check is for the case that the left member 
+                    # contains only one empty element
                     if check or ('' in df.left_member and len(df.left_member) == 1):
                         del functionalDependencyToCheck[index]
                         for attribute in df.right_member:
-                            if attribute not in all_constant_in_query:
-                                self.closure.append(attribute)
+                            # Check if the element is a variable not empty
+                            if attribute not in all_constant_in_query and attribute != '':
+                                if attribute not in self.closure:
+                                    self.closure.append(attribute)
                         i = 0
                 i += 1
 

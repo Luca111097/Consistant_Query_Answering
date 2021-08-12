@@ -25,7 +25,7 @@ def build_functional_dependency_list(atom_list):
 
         functional_dependency_list.append(FunctionalDependency(atom_key_processing, atom_non_key_processing))
 
-
+# Extract the relation name and all the content between parenthesis
 def find_information_and_name(chain):
     idx_open_paranthesis = 0
     idx_close_paranthesis = -1
@@ -39,7 +39,7 @@ def find_information_and_name(chain):
     return chain[:idx_open_paranthesis].strip(' '), chain[
                                                     idx_open_paranthesis + 1:idx_close_paranthesis].strip(' ')
 
-
+# Extract all the key element between brackets
 def extract_brackets(chain):
     for i in range(len(chain)):
         idx_open_bracket = 0
@@ -54,8 +54,8 @@ def extract_brackets(chain):
         return chain[idx_open_bracket + 1:idx_close_bracket].strip(' '), chain[idx_close_bracket + 2:].strip(
             ' ')
 
-
-def find_keys_and_constants(chain, key):
+# Identify variable and constant in chain
+def find_variables_and_constants(chain, key):
     elements = chain.split(',')
     elements = [element.strip(' ') for element in elements]
     for element in elements:
@@ -71,28 +71,31 @@ def find_keys_and_constants(chain, key):
 
 
 #######################################################
-#                  Input treatment                    #
+#                    Main process                     #
 #######################################################
+
 if __name__ == "__main__":
 
     all_variable_in_query = []
     all_constant_in_query = []
     atom_list = []
     functional_dependency_list = []
-    free = []
+    not_free = []
     atom = None
 
+    # Read user input
     query = input("Enter your query : ")
     all_atom_in_query = query.split(";")
 
+    # Build the list of atoms based on the strings
     for atom_chain in all_atom_in_query:
         keys = []
         non_keys = []
 
         relation_name, info = find_information_and_name(atom_chain)
         key_chain, non_key_chain = extract_brackets(info)
-        find_keys_and_constants(key_chain, keys)
-        find_keys_and_constants(non_key_chain, non_keys)
+        find_variables_and_constants(key_chain, keys)
+        find_variables_and_constants(non_key_chain, non_keys)
 
         atom_list.append(Atom(relation_name, keys, non_keys))
 
@@ -110,9 +113,10 @@ if __name__ == "__main__":
     # ################### First Order Rewrite ######################
 
     print("Tableau des attaques : " + str(attackGraph.attack))
-
+    print("FO : " + str(attackGraph.is_first_order_expressible))
+    
     if attackGraph.is_first_order_expressible:
-        rewrite = fo_rewriter.perform_first_order_rewrite(atom_list, free)
+        rewrite = fo_rewriter.perform_first_order_rewrite(atom_list, not_free)
         print("Réécriture : " + rewrite)
 
 

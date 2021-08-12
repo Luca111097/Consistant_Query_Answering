@@ -1,3 +1,5 @@
+import re
+
 STR_EXISTS = u"\u2203"
 STR_FORALL = u"\u2200"
 STR_AND = u" \u2227 "
@@ -17,6 +19,9 @@ class FirstOrderRewrite:
         self.all_variable_in_query = all_variable_in_query
         self.all_constant_in_query = all_constant_in_query
 
+    def is_empty_string(self, string_to_check):
+        return re.search("^\s*$", string_to_check)
+
     def formatting_all_elements(self, VAR, NEWVAR, CONST):
 
         if len(VAR) != 0:
@@ -33,61 +38,64 @@ class FirstOrderRewrite:
         else:
             existNewVar = ""
 
-        if len(CONST) != 0:
+        if not all([self.is_empty_string(constant) for constant in CONST]):
             existConst = STR_ARROW
-            for index, everyConst in enumerate(CONST):
-                if index == 0:
-                    existConst += NEWVAR[index] + " = " + str(everyConst)
-                else:
-                    existConst += STR_AND + NEWVAR[index] + " = " + str(everyConst)
+            is_first_iteration = True
+            for i in range(0,len(CONST)):
+                if CONST[i] != '':
+                    if is_first_iteration:
+                        existConst += NEWVAR[i] + " = " + str(CONST[i])
+                        is_first_iteration = False
+                    else:
+                        existConst += STR_AND + NEWVAR[i] + " = " + str(CONST[i])
         else:
             existConst = ""
 
         return existVar, existNewVar, existConst
 
-    def perform_first_order_rewrite(self, atom_list, free):
+    def perform_first_order_rewrite(self, atom_list, not_free):
 
         if len(atom_list) == 0:
             return "true"
         else:
             VAR = []
-            CONST = []
             NEWVAR = []
             F = atom_list[0]
+            CONST = [''] * len(F.non_key)
 
             for key in F.key:
-                if key in self.all_variable_in_query and key not in free:
+                if key in self.all_variable_in_query and key not in not_free:
                     VAR.append(key)
-                    free.append(key)
+                    not_free.append(key)
 
             for nonKey in F.non_key:
-                if nonKey in self.all_variable_in_query and nonKey not in free:
+                if nonKey in self.all_variable_in_query and nonKey not in not_free:
                     VAR.append(nonKey)
                     NEWVAR.append(nonKey)
-                    free.append(nonKey)
+                    not_free.append(nonKey)
 
                 elif nonKey in self.all_constant_in_query:
                     NEWVAR.append("c" + str(self.idx_constant))
                     i = F.non_key.index(nonKey)
-                    CONST.insert(i, nonKey)
+                    CONST[i] = nonKey
                     self.idx_constant += 1
 
         existVar, existNewVar, existConst = self.formatting_all_elements(VAR, NEWVAR, CONST)
 
         del atom_list[0]
 
-        toContinue = self.perform_first_order_rewrite(atom_list, free)
+        toContinue = self.perform_first_order_rewrite(atom_list, not_free)
 
         if toContinue != "true" and existConst:
             toContinue = STR_AND + toContinue
         elif toContinue != "true" and existConst != "":
             toContinue = STR_ARROW + toContinue
-        elif toContinue == "true":
+        elif toContinue == "true" and existConst != "":
             toContinue = STR_AND + toContinue
-        else:
+        else :
             toContinue = STR_ARROW + toContinue
 
-        return existVar + " (" + F.relation_name + " (" + ",".join(F.key) + "," + ",".join(
+        return existVar + " (" + F.relation_name + "(" + ",".join(F.key) + "," + ",".join(
             F.non_key) + ") " + STR_AND + " (" + existNewVar + " (" + F.relation_name + "(" + ",".join(
             F.key) + "," + ",".join(
             NEWVAR) + ") " + existConst + toContinue + ")))"
