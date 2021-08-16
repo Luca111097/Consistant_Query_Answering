@@ -7,7 +7,7 @@ class Atom:
         self.closure = []
 
     # Calculate closure for an atom
-    def calculate_closure(self, functionalDependencyToCheck, all_constant_in_query):
+    def calculate_closure(self, functional_dependency_to_check, all_constant_in_query):
      
         i = 0
 
@@ -23,18 +23,18 @@ class Atom:
 
             print("Dépendances fonctionelles de " + self.relation_name)
 
-            for df in functionalDependencyToCheck:
+            for df in functional_dependency_to_check:
                 print(f"{' '*4}-{df}")
 
             # Runs through the whole array
-            while i <= len(functionalDependencyToCheck):
-                for index, df in enumerate(functionalDependencyToCheck):
+            while i <= len(functional_dependency_to_check):
+                for index, df in enumerate(functional_dependency_to_check):
                     check = any(item in df.left_member for item in self.closure)
                     # Check if item is in left member of functional dependency 
                     # or the second check is for the case that the left member 
                     # contains only one empty element
                     if check or ('' in df.left_member and len(df.left_member) == 1):
-                        del functionalDependencyToCheck[index]
+                        del functional_dependency_to_check[index]
                         for attribute in df.right_member:
                             # Check if the element is a variable not empty
                             if attribute not in all_constant_in_query and attribute != '':

@@ -86,13 +86,13 @@ class FirstOrderRewrite:
 
         toContinue = self.perform_first_order_rewrite(atom_list, not_free)
 
-        if toContinue != "true" and existConst:
+        if toContinue != "true" and existConst != "":
             toContinue = STR_AND + toContinue
-        elif toContinue != "true" and existConst != "":
+        elif toContinue != "true" and existConst == "":
             toContinue = STR_ARROW + toContinue
         elif toContinue == "true" and existConst != "":
             toContinue = STR_AND + toContinue
-        else :
+        elif toContinue == "true" and existConst == "":
             toContinue = STR_ARROW + toContinue
 
         return existVar + " (" + F.relation_name + "(" + ",".join(F.key) + "," + ",".join(

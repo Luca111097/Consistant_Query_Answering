@@ -4,7 +4,7 @@ class AttackGraph:
 
         self.not_used_functional_dependency = []
         self.attacked_vars = []
-        self.is_first_order_expressible = True
+        self.is_first_order_expressible = False
         self.are_there_any_attack = False
         self.attack = []
         self.occur_in_atom = {}
