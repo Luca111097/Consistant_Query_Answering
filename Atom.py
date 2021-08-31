@@ -21,7 +21,7 @@ class Atom:
                     if attribute not in self.closure:
                         self.closure.append(attribute)
 
-            print("Dépendances fonctionelles de " + self.relation_name)
+            print("Dépendances fonctionnelles de " + self.relation_name)
 
             for df in functional_dependency_to_check:
                 print(f"{' '*4}-{df}")
